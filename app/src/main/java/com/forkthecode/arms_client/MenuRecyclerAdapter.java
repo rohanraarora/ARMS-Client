@@ -1,5 +1,6 @@
 package com.forkthecode.arms_client;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.client.Query;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Rohan on 3/10/2016.
@@ -14,20 +16,23 @@ import com.firebase.client.Query;
 public class MenuRecyclerAdapter extends FirebaseRecyclerAdapter<MenuItem,MenuRecyclerAdapter.MenuViewHolder> {
 
     static ItemClickListener mListener;
+    Context mContext;
 
     public interface ItemClickListener{
         void onClick(int position);
     }
 
-    public MenuRecyclerAdapter(ItemClickListener listener,Class<MenuItem> modelClass, int modelLayout, Class<MenuViewHolder> viewHolderClass, Query ref){
+    public MenuRecyclerAdapter(Context context,ItemClickListener listener,Class<MenuItem> modelClass, int modelLayout, Class<MenuViewHolder> viewHolderClass, Query ref){
         super(modelClass,modelLayout,viewHolderClass,ref);
         mListener = listener;
+        mContext = context;
     }
     @Override
     protected void populateViewHolder(MenuViewHolder viewHolder, MenuItem model, int position) {
         viewHolder.getNameTextView().setText(model.getName());
         viewHolder.getCategoryTextView().setText(model.getCategory());
         viewHolder.getPriceTextView().setText(model.getPrice());
+        Picasso.with(mContext).load(model.getImageUrl()).into(viewHolder.getImageView());
     }
 
     public static class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

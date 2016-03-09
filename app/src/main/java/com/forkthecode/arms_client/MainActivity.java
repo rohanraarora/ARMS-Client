@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
-        rootRef = new Firebase("https://arms.firebaseio.com/");
+        rootRef = new Firebase(Constant.ROOT_URL);
         userRef = rootRef.child("users");
         mDialog = new ProgressDialog(this);
         mDialog.setMessage("Loading...");

@@ -31,9 +31,15 @@ public class RestaurantDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_detail);
-        uid = getIntent().getExtras().getString(Constant.SHARED_PREF_UID_KEY, "");
+        Intent intent = getIntent();
         sharedPreferences = getSharedPreferences("ARMS", MODE_PRIVATE);
-        rootRef = new Firebase("https://arms.firebaseio.com/");
+        if(sharedPreferences.contains(Constant.SHARED_PREF_UID_KEY)){
+            uid = sharedPreferences.getString(Constant.SHARED_PREF_UID_KEY,"");
+        }
+        else if(intent!=null) {
+            uid = getIntent().getStringExtra(Constant.SHARED_PREF_UID_KEY);
+        }
+        rootRef = new Firebase(Constant.ROOT_URL);
         userRef = rootRef.child("users").child(uid);
         restaurantRef = userRef.child("restaurant");
         nameEditText = (EditText)this.findViewById(R.id.restaurantNameEditText);
@@ -51,19 +57,18 @@ public class RestaurantDetail extends AppCompatActivity {
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Loading");
         dialog.show();
-        Map<String,String> map = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
         map.put("name",nameEditText.getEditableText().toString());
         map.put("desc",descriptionEditText.getEditableText().toString());
         map.put("address",addressEditView.getEditableText().toString());
-        restaurantRef.setValue(map, new Firebase.CompletionListener() {
+        restaurantRef.updateChildren(map, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 dialog.dismiss();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Constant.SHARED_PREF_UID_KEY,uid);
+                editor.putString(Constant.SHARED_PREF_UID_KEY, uid);
                 editor.commit();
                 goToHomeActivity();
-
             }
         });
     }

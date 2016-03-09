@@ -1,17 +1,23 @@
 package com.forkthecode.arms_client;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,20 +29,35 @@ public class HomeActivity extends AppCompatActivity {
     String uid;
     RecyclerView recyclerView;
     MenuRecyclerAdapter mAdapter;
+    TextView nameTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Firebase.setAndroidContext(this);
+        nameTextView = (TextView)this.findViewById(R.id.menuRestaurantNameTextView);
         sharedPreferences = getSharedPreferences("ARMS", MODE_PRIVATE);
         uid = sharedPreferences.getString(Constant.SHARED_PREF_UID_KEY, "");
-        rootRef = new Firebase("https://arms.firebaseio.com/");
+        rootRef = new Firebase(Constant.ROOT_URL);
         userRef = rootRef.child("users").child(uid);
         restaurantRef = userRef.child("restaurant");
+        Firebase restaurantNameRef = restaurantRef.child("name");
+        restaurantNameRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                nameTextView.setText(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                nameTextView.setText("Unable to connect");
+            }
+        });
         menuRef = restaurantRef.child("menu");
         recyclerView = (RecyclerView)this.findViewById(R.id.recyclerView);
-        mAdapter = new MenuRecyclerAdapter(new MenuRecyclerAdapter.ItemClickListener() {
+        mAdapter = new MenuRecyclerAdapter(this,new MenuRecyclerAdapter.ItemClickListener() {
             @Override
             public void onClick(int position) {
                 com.forkthecode.arms_client.MenuItem menuItem = mAdapter.getItem(position);
@@ -46,17 +67,12 @@ public class HomeActivity extends AppCompatActivity {
                 com.forkthecode.arms_client.MenuItem.class,
                 R.layout.row_menu_item, MenuRecyclerAdapter.MenuViewHolder.class,menuRef);
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
     }
 
     public void addMenu(View view){
-        Map<String,String> map = new HashMap<>();
-        map.put("name","Chicken Tikka");
-        map.put("price","450");
-        map.put("category","Tikka");
-        map.put("description","san  fsi ni iuf afifhia ifah iahf aihfiahf aifh aiafi hi ai fhai");
-        map.put("imageUrl", "jsajfaijf");
-        menuRef.push().setValue(map);
+       Intent intent = new Intent(this,AddMenu.class);
+        startActivity(intent);
     }
     @Override
     protected void onDestroy() {
@@ -79,8 +95,9 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_update_restaurant) {
+            Intent intent = new Intent(this,RestaurantDetail.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
