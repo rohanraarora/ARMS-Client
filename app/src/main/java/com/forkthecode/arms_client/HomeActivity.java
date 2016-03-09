@@ -99,6 +99,14 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this,RestaurantDetail.class);
             startActivity(intent);
         }
+        else if(id == R.id.action_logout){
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(Constant.SHARED_PREF_UID_KEY);
+            editor.commit();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
 
         return super.onOptionsItemSelected(item);
     }
