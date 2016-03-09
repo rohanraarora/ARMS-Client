@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mSharedPreferences = getSharedPreferences("ARMS",MODE_PRIVATE);
         if(mSharedPreferences.contains(Constant.SHARED_PREF_UID_KEY)){
+            Intent intent = new Intent(this,HomeActivity.class);
+            startActivity(intent);
+            this.finish();
             uid = mSharedPreferences.getString(Constant.SHARED_PREF_UID_KEY,"");
         }
         setContentView(R.layout.activity_main);
@@ -48,16 +51,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
+    public void gotoRestaurant(){
+        Intent intent = new Intent(this,RestaurantDetail.class);
+        intent.putExtra(Constant.SHARED_PREF_UID_KEY,uid);
+        startActivity(intent);
+        this.finish();
+    }
 
     public void signin(View view){
         mDialog.show();
-        rootRef.authWithPassword(emailEditText.getEditableText().toString(), passwordEditText.getEditableText().toString(), new Firebase.AuthResultHandler() {
+        String email = emailEditText.getEditableText().toString();
+        String pass =  passwordEditText.getEditableText().toString();
+        rootRef.authWithPassword(email,pass, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 mDialog.dismiss();
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putString(Constant.SHARED_PREF_UID_KEY,authData.getUid());
+                uid = authData.getUid();
                 Toast.makeText(getApplication(),"User ID: " + authData.getUid() + ", Provider: " + authData.getProvider(),Toast.LENGTH_LONG).show();
+                gotoRestaurant();
             }
 
             @Override

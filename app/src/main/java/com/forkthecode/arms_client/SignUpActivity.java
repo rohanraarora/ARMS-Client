@@ -50,6 +50,14 @@ public class SignUpActivity extends AppCompatActivity {
         this.finish();
     }
 
+    public void gotoRestaurant(){
+        Intent intent = new Intent(this,RestaurantDetail.class);
+        intent.putExtra(Constant.SHARED_PREF_UID_KEY,uid);
+        startActivity(intent);
+        this.finish();
+    }
+
+
     public void signup(View view){
         mDialog.show();
         final String email = emailEditText.getEditableText().toString();
@@ -58,14 +66,13 @@ public class SignUpActivity extends AppCompatActivity {
             public void onSuccess(Map<String, Object> result) {
                 mDialog.dismiss();
                 uid = result.get("uid").toString();
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putString(Constant.SHARED_PREF_UID_KEY,uid);
                 User user = new User();
                 user.setEmail(email);
                 user.setName(nameEditText.getEditableText().toString());
                 user.setPhone(phoneEditText.getEditableText().toString());
                 userRef.child(uid).setValue(user);
                 Toast.makeText(getApplicationContext(), "Successfully created user account with uid: " + result.get("uid"), Toast.LENGTH_LONG).show();
+                gotoRestaurant();
             }
             @Override
             public void onError(FirebaseError firebaseError) {
