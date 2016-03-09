@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.forkthecode.arms_client.SignUpActivity">
+
+    <EditText
+        android:id="@+id/signUpEmailTextView"
+        android:layout_width="match_parent"
+        android:hint="Email"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"/>
+
+    <EditText
+        android:id="@+id/signUpNameEditText"
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_below="@id/signUpEmailTextView"
+        android:hint="Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/signUpPhoneEditText"
+        android:layout_below="@id/signUpNameEditText"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:inputType="number"
+        android:hint="Phone"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/signUpPasswordTextView"
+        android:inputType="textPassword"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_below="@id/signUpPhoneEditText"
+        android:hint="Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/signUpLoginButton"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="SIGN IN"
+        android:onClick="login"
+        android:layout_below="@id/signUpPasswordTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/signUpSignUpButton"
+        android:onClick="signup"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/signUpPasswordTextView"
+        android:text="SIGN UP"
+        android:layout_toRightOf="@id/signUpLoginButton"/>
+
+</RelativeLayout>
